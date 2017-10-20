@@ -1,8 +1,13 @@
 const models = require('../models/models.js')
 
-function getAll(req, res, next) {
-  const data = models.getAll()
+function getBooks(req, res, next) {
+  const data = models.getBooks()
   res.status(200).json(data)
 }
 
-module.exports = {getAll}
+function getOneBook(req, res, next) {
+  const data = models.getOneBook(req.params.id)
+  res.status(200).json(data)
+}
+
+module.exports = {getBooks, getOneBook}
