@@ -11,8 +11,11 @@ app.use(bodyParser.json())
 app.disable('x-powered-by')
 
 app.get('/', (req, res, next)=>{
-  res.status(200).json({data: 'all clear'})
+  res.status(200).json({data: 'go to /books for technical library'})
 })
+
+const bookRoutes = require('./router/router.js')
+app.use('/books', bookRoutes)
 
 app.use((err, req, res, next) => {
   const status = err.status || 500
