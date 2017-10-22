@@ -13,9 +13,13 @@ function getOneBook(req, res, next) {
 }
 
 function createBook(req, res, next) {
-  console.log(req.body)
   const data = models.createBook(req.body)
   res.status(201).json(data)
 }
 
-module.exports = {getBooks, getOneBook, createBook}
+function updateBook(req, res, next) {
+  const data = models.createBook(req.body)
+  res.status(201).json(data)
+}
+
+module.exports = {getBooks, getOneBook, createBook, updateBook}

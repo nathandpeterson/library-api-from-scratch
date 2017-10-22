@@ -13,7 +13,9 @@ function getBooks(){
 function getOneBook(id){
   const books = fs.readFileSync(path, 'utf-8')
   const bookJS = JSON.parse(books)
-  const reqBook = bookJS(find(book => book.id === id))
+  const reqBook = bookJS[0].books.find(book => book.id === id)
+  if(!reqBook) return {status: 400, message: 'no robot found'}
+  return reqBook
 }
 
 function createBook([body]){
@@ -50,6 +52,10 @@ function addAuthor(data){
   const authorString = JSON.stringify(authorsJS)
   //Write to backup (change to real once more features work)
   fs.writeFileSync(backup, authorString)
+}
+
+function updateBook(data){
+
 }
 
 module.exports = {getOneBook, getBooks, createBook}
