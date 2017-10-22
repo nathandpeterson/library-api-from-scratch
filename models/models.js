@@ -2,7 +2,7 @@ const uuid = require('uuid')
 const fs = require('fs')
 const path = './db.json'
 const backup = './db.bak.json'
-const lodash = require('lodash')
+const _ = require('lodash')
 
 function getBooks(){
   const books = fs.readFileSync(path, 'utf-8')
@@ -14,7 +14,7 @@ function getOneBook(id){
   const books = fs.readFileSync(path, 'utf-8')
   const bookJS = JSON.parse(books)
   const reqBook = bookJS[0].books.find(book => book.id === id)
-  if(!reqBook) return {status: 400, message: 'no robot found'}
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
   return reqBook
 }
 
@@ -55,7 +55,24 @@ function addAuthor(data){
 }
 
 function updateBook(data){
-
+  const books = fs.readFileSync(path, 'utf-8')
+  const bookJS = JSON.parse(books)
+  const reqBook = bookJS[0].books.find(book => book.data.id === id)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  //update requested book here
+  return reqBook
 }
 
-module.exports = {getOneBook, getBooks, createBook}
+function destroyBook(id){
+  const books = fs.readFileSync(path, 'utf-8')
+  const bookJS = JSON.parse(books)
+  const reqBook = bookJS[0].books.find(book => book.data.id === id)
+  console.log('----------------------', reqBook)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  const bookIdx = _.findIndex(booksJS[0].books.id, id)
+  console.log('******************************', bookIdx)
+  //delete book
+  return reqBook
+}
+
+module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook}

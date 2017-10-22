@@ -22,4 +22,10 @@ function updateBook(req, res, next) {
   res.status(201).json(data)
 }
 
-module.exports = {getBooks, getOneBook, createBook, updateBook}
+function destroyBook(req, res, next){
+  console.log(req.params.id, 'oooooooooooooooooooooo')
+  const data = models.destroyBook(req.params.id)
+  res.status(200).json(data)
+}
+
+module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook}
