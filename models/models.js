@@ -75,12 +75,11 @@ function destroyBook(id){
   const books = fs.readFileSync(path, 'utf-8')
   const bookJS = JSON.parse(books)
   const reqBook = bookJS[0].books.find(book => book.id === id)
-  console.log('----------------------', reqBook)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
-  const bookIdx = _.findIndex(booksJS[0].books, id)
-  console.log('******************************', bookIdx)
-  //delete book
-  return reqBook
+  const filteredDB = bookJS[0].books.filter(book => book.id !== id)
+  bookJS[0].books = filteredDB
+  // this deletes the book but it doesn't delete the author
+  return bookJS
 }
 
 

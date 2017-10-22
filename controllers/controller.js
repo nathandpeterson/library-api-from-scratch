@@ -23,7 +23,6 @@ function updateBook(req, res, next) {
 }
 
 function destroyBook(req, res, next){
-  console.log(req.params.id, 'oooooooooooooooooooooo')
   const data = models.destroyBook(req.params.id)
   res.status(200).json(data)
 }
