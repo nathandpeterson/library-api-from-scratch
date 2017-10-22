@@ -18,7 +18,7 @@ function createBook(req, res, next) {
 }
 
 function updateBook(req, res, next) {
-  const data = models.createBook(req.body)
+  const data = models.updateBook(req.params.id, req.body)
   res.status(201).json(data)
 }
 
