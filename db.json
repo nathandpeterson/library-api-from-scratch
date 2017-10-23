@@ -29,18 +29,18 @@
       {"id": "cb6eceb8-4363-4103-bd92-6efc315cef1e",
       "firstname": "Mikhail",
       "lastname": "Bakhtin",
-      "books": ["Problems of Dostoevsky’s Poetics"]},
+      "books": "287f9771-b66a-4011-9ffa-2e681b488dcd"},
       {"id": "75a0cf7b-827d-4d52-a0e1-3fff10a5fd5b",
       "firstname": "Bonnie",
       "lastname": "Blackwell",
-      "books": ["Corkscrews and Courtesans: Sex and Death in Circulation Novels"]},
+      "books": "a21b161c-c422-455e-a926-1bdb613207f2"},
       {"id": "d1ee67bc-0ca2-4eb2-98ad-1681fb09c729",
       "firstname": "Fredric",
       "lastname": "Jameson",
-      "books": ["The Political Unconsciousness: Narrative as a Socially Symbolic Act"]},
+      "books": "59e0f022-901a-4ebe-9654-8cf629085283"},
       {"id": "e4793178-30a2-40a9-a4bc-8835b9ae4490",
       "firstname": "Peter",
       "lastname": "Sloterdijk",
-      "books": ["Critique of Cynical Reason"]}
+      "books": "cc3b7a6c-5b4e-4478-8d7b-776adbe1796a"}
       ]}
 ]

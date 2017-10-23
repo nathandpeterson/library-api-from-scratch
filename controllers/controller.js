@@ -27,9 +27,9 @@ function destroyBook(req, res, next){
   res.status(200).json(data)
 }
 
-function getAuthors(req, res, next) {
-  const data = models.getAuthors(req.param.id, req.param.author)
+function getAllAuthors(req, res, next) {
+  const data = models.getAllAuthors(req.params.id)
   res.status(200).json(data)
 }
 
-module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAuthors}
+module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAllAuthors}

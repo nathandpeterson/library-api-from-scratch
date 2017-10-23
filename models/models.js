@@ -89,14 +89,21 @@ function destroyBook(id){
   return reqBook
 }
 
-function getAuthors(id, authorID) {
+function getAllAuthors(id) {
   const books = fs.readFileSync(path, 'utf-8')
   const bookJS = JSON.parse(books)
   const reqBook = bookJS[0].books.find(book => book.id === id)
-  const reqAuthor = reqBook.author.find(auth => auth.id === authorID)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
-  return reqAuthor
+  const reqAuthors = reqBook.author
+  const result = []
+  for(let i = 0; i < reqAuthors.length; i++){
+    let singleAuthor = {author: reqAuthors[i]}
+    singleAuthor.details = bookJS[0].authors.find(author => author.books === id)
+    // response.details.books = reqBook[title]
+    result.push(singleAuthor)
+  }
+  return result
 }
 
 
-module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAuthors}
+module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors}
