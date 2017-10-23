@@ -32,4 +32,9 @@ function getAllAuthors(req, res, next) {
   res.status(200).json(data)
 }
 
-module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAllAuthors}
+function getOneAuthor(req, res, next) {
+  const data = models.getOneAuthor(req.params.id, req.params.authorID)
+  res.status(200).json(data)
+}
+
+module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor}

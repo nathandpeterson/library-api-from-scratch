@@ -9,5 +9,6 @@ router.put('/:id', ctrl.updateBook)
 router.delete('/:id', ctrl.destroyBook)
 
 router.get('/:id/authors', ctrl.getAllAuthors)
+router.get('/:id/authors/:authorID', ctrl.getOneAuthor)
 
 module.exports = router

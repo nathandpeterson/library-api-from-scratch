@@ -105,5 +105,13 @@ function getAllAuthors(id) {
   return result
 }
 
+function getOneAuthor(id, authorID){
+  const books = fs.readFileSync(path, 'utf-8')
+  const bookJS = JSON.parse(books)
+  const reqBook = bookJS[0].books.find(book => book.id === id)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  const reqAuthor = bookJS[0].authors.find(author => author.id === authorID)
+  return reqAuthor
+}
 
-module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors}
+module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor}
