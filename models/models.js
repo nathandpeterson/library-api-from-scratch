@@ -7,7 +7,7 @@ const _ = require('lodash')
 function bookSchema(data){
   const book = {id: uuid()}
   if(data.title) book.title = data.title
-  if (data.author) book.author = data.author
+  if (data.author) book.author = [data.author]
   if(data.description) book.description = data.description
   if(data.year) book.year = data.year
   return book
@@ -27,48 +27,53 @@ function getOneBook(id){
   return reqBook
 }
 
-function createBook([body]){
+function updateBook(id, data){
+  const books = fs.readFileSync(path, 'utf-8')
+  const bookJS = JSON.parse(books)
+  const reqBook = bookJS[0].books.find(book => book.id === id)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  //update requested book here
+  if(data.title) reqBook.title = data.title
+  if (data.author) reqBook.author = data.author
+  if(data.description) reqBook.description = data.description
+  if(data.year) reqBook.year = data.year
+  for(let i = 0 ; i < bookJS[0].books.length; i++){
+    if(bookJS[0].books[i].id === id) bookJS[0].books[i] = reqBook
+  }
+  const bookString = JSON.stringify(bookJS)
+  //Write to backup (change to real, once author feature works)
+  fs.writeFileSync(backup, bookString)
+  return reqBook
+}
+
+function createBook(body){
   const book = bookSchema(body)
   if(book.title.length > 30) return {status: 400, message: 'title length must not exceed 30 characters'}
   const books = fs.readFileSync(path, 'utf-8')
   const booksJS = JSON.parse(books)
   booksJS[0].books.push(book)
+  book.author.forEach(function(author){
+    addAuthors(author)
+  })
   const booksString = JSON.stringify(booksJS)
   //Write to backup (change to real, once author feature works)
   fs.writeFileSync(backup, booksString)
-  addAuthor(book)
   return book
 }
 
-function addAuthor(data){
-  const {author} = data
-  let firstname
-  let lastname
-  data.author.forEach(function(e){
-    e = e.split(', ')
-    firstname= e[1]
-    lastname = e[0]
-  })
+function addAuthors(author){
+  author = author.split(', ')
+  let firstname = author[1]
+  let lastname = author[0]
   const newAuthor = {id: uuid()}
   newAuthor.firstname = firstname
   newAuthor.lastname = lastname
-  const authors = fs.readFileSync(path, 'utf-8')
+  const authors = fs.readFileSync(backup, 'utf-8')
   const authorsJS = JSON.parse(authors)
   authorsJS[0].authors.push(newAuthor)
   const authorString = JSON.stringify(authorsJS)
-  //Write to backup (change to real once more features work)
+  //Write to backup (some reason not updating correctly)
   fs.writeFileSync(backup, authorString)
-}
-
-function updateBook(id, data){
-  console.log(id, '--------')
-  const books = fs.readFileSync(path, 'utf-8')
-  const bookJS = JSON.parse(books)
-  const reqBook = bookJS[0].books.find(book => book.id === id)
-  if(!reqBook) return {status: 400, message: 'no book found with that id'}
-
-  //update requested book here
-  return reqBook
 }
 
 function destroyBook(id){
@@ -76,11 +81,22 @@ function destroyBook(id){
   const bookJS = JSON.parse(books)
   const reqBook = bookJS[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
-  const filteredDB = bookJS[0].books.filter(book => book.id !== id)
-  bookJS[0].books = filteredDB
-  // this deletes the book but it doesn't delete the author
-  return bookJS
+  const dbFilterBook = bookJS[0].books.filter(book => book.id !== id)
+  bookJS[0].books = dbFilterBook
+  const authorString = JSON.stringify(bookJS)
+  //Write to backup (some reason not updating correctly)
+  fs.writeFileSync(backup, authorString)
+  return reqBook
+}
+
+function getAuthors(id, authorID) {
+  const books = fs.readFileSync(path, 'utf-8')
+  const bookJS = JSON.parse(books)
+  const reqBook = bookJS[0].books.find(book => book.id === id)
+  const reqAuthor = reqBook.author.find(auth => auth.id === authorID)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  return reqAuthor
 }
 
 
-module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook}
+module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAuthors}
