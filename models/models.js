@@ -134,13 +134,15 @@ function createAuthor(id, data){
 
 function deleteAuthor(id, authorID){
   console.log('model----------', authorID)
-  const books = fs.readFileSync(path, 'utf-8')
-  const bookJS = JSON.parse(books)
-  const reqBook = bookJS[0].books.find(book => book.id === id)
+  const db = fs.readFileSync(path, 'utf-8')
+  const dbJSON = JSON.parse(db)
+  const reqBook = dbJSON[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
-  
+  const dbFilterAuthor = dbJSON[0].authors.filter(author => author.id !== id)
+  console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$', reqBook)
+  // bookJS[0].books = dbFilterBook
   const deletedAuthor = authorID
-  return deletedAuthor
+  return reqBook
 }
 
 module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor}
