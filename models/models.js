@@ -102,6 +102,7 @@ function getAllAuthors(id) {
     // response.details.books = reqBook[title]
     result.push(singleAuthor)
   }
+  //Add to database
   return result
 }
 
@@ -111,7 +112,35 @@ function getOneAuthor(id, authorID){
   const reqBook = bookJS[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
   const reqAuthor = bookJS[0].authors.find(author => author.id === authorID)
+  //Add to database
   return reqAuthor
 }
 
-module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor}
+function createAuthor(id, data){
+  const newAuthor = {id : uuid()}
+  newAuthor.firstname = data.firstname
+  newAuthor.lastname = data.lastname
+  newAuthor.books = id
+  const db = fs.readFileSync(path, 'utf-8')
+  const dbJSON = JSON.parse(db)
+  dbJSON[0].authors.push(newAuthor)
+  //Add to database
+  const stringDB = JSON.stringify(dbJSON)
+  //fs.writeFileSync(path, stringDB)
+  let requestedBook = dbJSON[0].books.find(book => book.id === id)
+  newAuthor.books = requestedBook.title
+  return newAuthor
+}
+
+function deleteAuthor(id, authorID){
+  console.log('model----------', authorID)
+  const books = fs.readFileSync(path, 'utf-8')
+  const bookJS = JSON.parse(books)
+  const reqBook = bookJS[0].books.find(book => book.id === id)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  
+  const deletedAuthor = authorID
+  return deletedAuthor
+}
+
+module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor}
