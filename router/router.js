@@ -12,5 +12,6 @@ router.get('/:id/authors', ctrl.getAllAuthors)
 router.get('/:id/authors/:authorID', ctrl.getOneAuthor)
 router.post('/:id/authors', ctrl.createAuthor)
 router.delete('/:id/authors/:authorID', ctrl.deleteAuthor)
+router.put('/:id/authors/:authorID', ctrl.updateAuthor)
 
 module.exports = router

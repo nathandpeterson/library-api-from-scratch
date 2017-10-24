@@ -41,8 +41,7 @@ function updateBook(id, data){
     if(bookJS[0].books[i].id === id) bookJS[0].books[i] = reqBook
   }
   const bookString = JSON.stringify(bookJS)
-  //Write to backup (change to real, once author feature works)
-  fs.writeFileSync(backup, bookString)
+  fs.writeFileSync(path, bookString)
   return reqBook
 }
 
@@ -51,29 +50,26 @@ function createBook(body){
   if(book.title.length > 30) return {status: 400, message: 'title length must not exceed 30 characters'}
   const books = fs.readFileSync(path, 'utf-8')
   const booksJS = JSON.parse(books)
+  if(!book.author) return {status: 400, message: 'book must have an author'}
   booksJS[0].books.push(book)
-  book.author.forEach(function(author){
-    addAuthors(author)
-  })
-  const booksString = JSON.stringify(booksJS)
-  //Write to backup (change to real, once author feature works)
-  fs.writeFileSync(backup, booksString)
+  book.author.forEach(author => addAuthors(author))
+  const bookString = JSON.stringify(booksJS)
+  fs.writeFileSync(path, bookString)
   return book
 }
 
-function addAuthors(author){
-  author = author.split(', ')
+function addAuthors(fullname){
+  let author = fullname[0].split(', ')
   let firstname = author[1]
   let lastname = author[0]
   const newAuthor = {id: uuid()}
   newAuthor.firstname = firstname
   newAuthor.lastname = lastname
-  const authors = fs.readFileSync(backup, 'utf-8')
+  const authors = fs.readFileSync(path, 'utf-8')
   const authorsJS = JSON.parse(authors)
   authorsJS[0].authors.push(newAuthor)
   const authorString = JSON.stringify(authorsJS)
-  //Write to backup (some reason not updating correctly)
-  fs.writeFileSync(backup, authorString)
+  fs.writeFileSync(path, authorString)
 }
 
 function destroyBook(id){
@@ -84,8 +80,7 @@ function destroyBook(id){
   const dbFilterBook = bookJS[0].books.filter(book => book.id !== id)
   bookJS[0].books = dbFilterBook
   const authorString = JSON.stringify(bookJS)
-  //Write to backup (some reason not updating correctly)
-  fs.writeFileSync(backup, authorString)
+  fs.writeFileSync(path, authorString)
   return reqBook
 }
 
@@ -99,10 +94,8 @@ function getAllAuthors(id) {
   for(let i = 0; i < reqAuthors.length; i++){
     let singleAuthor = {author: reqAuthors[i]}
     singleAuthor.details = bookJS[0].authors.find(author => author.books === id)
-    // response.details.books = reqBook[title]
     result.push(singleAuthor)
   }
-  //Add to database
   return result
 }
 
@@ -112,7 +105,6 @@ function getOneAuthor(id, authorID){
   const reqBook = bookJS[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
   const reqAuthor = bookJS[0].authors.find(author => author.id === authorID)
-  //Add to database
   return reqAuthor
 }
 
@@ -124,25 +116,59 @@ function createAuthor(id, data){
   const db = fs.readFileSync(path, 'utf-8')
   const dbJSON = JSON.parse(db)
   dbJSON[0].authors.push(newAuthor)
-  //Add to database
   const stringDB = JSON.stringify(dbJSON)
-  //fs.writeFileSync(path, stringDB)
+  fs.writeFileSync(path, stringDB)
   let requestedBook = dbJSON[0].books.find(book => book.id === id)
   newAuthor.books = requestedBook.title
   return newAuthor
 }
 
 function deleteAuthor(id, authorID){
-  console.log('model----------', authorID)
   const db = fs.readFileSync(path, 'utf-8')
   const dbJSON = JSON.parse(db)
   const reqBook = dbJSON[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  const authorInfo = dbJSON[0].authors.find(author => author.id === authorID)
+  for(let i = 0; i < reqBook.author.length; i++){
+    if(reqBook.author[i].includes(authorInfo.lastname)){
+      reqBook.author.splice(i, i+1)
+    }
+  }
   const dbFilterAuthor = dbJSON[0].authors.filter(author => author.id !== id)
-  console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$', reqBook)
-  // bookJS[0].books = dbFilterBook
-  const deletedAuthor = authorID
+  for(let i = 0; i < dbJSON[0].books.length; i++){
+    if(dbJSON[0].books[i].id === id){
+      dbJSON[0].books[i] = reqBook
+    }
+  }
+  const dbString = JSON.stringify(dbJSON)
+  fs.writeFileSync(path, dbString)
   return reqBook
 }
 
-module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor}
+
+function updateAuthor(id, authorID, data){
+  const db = fs.readFileSync(path, 'utf-8')
+  const dbJSON = JSON.parse(db)
+  const reqBook = dbJSON[0].books.find(book => book.id === id)
+  if(!reqBook) return {status: 400, message: 'no book found with that id'}
+  const reqAuthor = dbJSON[0].authors.find(author => author.id === authorID)
+  if(!reqAuthor) return {status: 400, message: 'no author found with that id'}
+  for(let i = 0; i < reqBook.author.length; i++){
+    if(reqBook.author[i].includes(reqAuthor.firstname || reqAuthor.lastname)){
+      reqBook.author[i] = `${data.lastname}, ${data.firstname}`
+    }
+  }
+  if (data.firstname) reqAuthor.firstname = data.firstname
+  if (data.lastname) reqAuthor.lastname = data.lastname
+  if (data.books) reqAuthor.books = data.books
+  const bookIndex = _.findIndex(dbJSON[0].books, function(o){return o.id === id})
+  dbJSON[0].books[bookIndex] = reqBook
+  for(let i = 0 ; i < dbJSON[0].authors.length; i++){
+    if(dbJSON[0].authors[i].id === authorID) dbJSON[0].authors[i] = reqAuthor
+  }
+  const dbString = JSON.stringify(dbJSON)
+  fs.writeFileSync(path, dbString)
+  return reqAuthor
+}
+
+module.exports = {getOneBook, getBooks, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor, updateAuthor}

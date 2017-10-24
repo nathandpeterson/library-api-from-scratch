@@ -47,4 +47,9 @@ function deleteAuthor(req, res, next){
   res.status(201).json(data)
 }
 
-module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor}
+function updateAuthor(req, res, next){
+  const data = models.updateAuthor(req.params.id, req.params.authorID, req.body)
+  res.status(201).json(data)
+}
+
+module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor, updateAuthor}
