@@ -2,8 +2,6 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 3003
 
-const morgan = require('morgan')
-// app.use(morgan('dev'))
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
