@@ -132,17 +132,15 @@ function deleteAuthor(id, authorID){
   const reqBook = dbJSON[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
   const authorInfo = dbJSON[0].authors.find(author => author.id === authorID)
-  // splice author out of array in dbJSON.books[i].author
+  const authorName = `${authorInfo.lastname}, ${authorInfo.firstname}`
   const bookIndex = _.findIndex(dbJSON[0].books, function(o){return o.id === id})
-  // ********** Find author's name in JSON-books and delete
-  //  filter author out of array in dbJSON.authors[i]
-  const dbFilterAuthor = dbJSON[0].authors.filter(author => author.id !== id)
-  for(let i = 0; i < dbJSON[0].books.length; i++){
-    if(dbJSON[0].books[i].id === id){
-      dbJSON[0].books[i] = reqBook
-    }
-  }
-  const dbString = JSON.stringify(dbFilterAuthor)
+  const reqBookAuthorArray = dbJSON[0].books[bookIndex].author
+  const filteredAuthorArray = reqBookAuthorArray.filter(author => author !== authorName)
+  reqBook.author = filteredAuthorArray
+  const dbFilterAuthor = dbJSON[0].authors.filter(author => author.id !== authorID)
+  dbJSON[0].books[bookIndex] = reqBook
+  dbJSON[0].authors = dbFilterAuthor
+  const dbString = JSON.stringify(dbJSON)
   fs.writeFileSync(path, dbString)
   return reqBook
 }
