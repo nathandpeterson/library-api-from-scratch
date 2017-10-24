@@ -90,11 +90,14 @@ function getAllAuthors(id) {
   const reqBook = bookJS[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
   const reqAuthors = reqBook.author
+  console.log(reqAuthors)
   const result = []
-  for(let i = 0; i < reqAuthors.length; i++){
-    let singleAuthor = {author: reqAuthors[i]}
-    singleAuthor.details = bookJS[0].authors.find(author => author.books === id)
-    result.push(singleAuthor)
+  for(let i = 0; i < bookJS[0].authors.length; i++){
+    let singleAuthor
+    if(bookJS[0].authors[i].books === id){
+      singleAuthor = {author: bookJS[0].authors[i]}
+    }
+    if (singleAuthor) result.push(singleAuthor)
   }
   return result
 }
@@ -129,18 +132,17 @@ function deleteAuthor(id, authorID){
   const reqBook = dbJSON[0].books.find(book => book.id === id)
   if(!reqBook) return {status: 400, message: 'no book found with that id'}
   const authorInfo = dbJSON[0].authors.find(author => author.id === authorID)
-  for(let i = 0; i < reqBook.author.length; i++){
-    if(reqBook.author[i].includes(authorInfo.lastname)){
-      reqBook.author.splice(i, i+1)
-    }
-  }
+  // splice author out of array in dbJSON.books[i].author
+  const bookIndex = _.findIndex(dbJSON[0].books, function(o){return o.id === id})
+  // ********** Find author's name in JSON-books and delete
+  //  filter author out of array in dbJSON.authors[i]
   const dbFilterAuthor = dbJSON[0].authors.filter(author => author.id !== id)
   for(let i = 0; i < dbJSON[0].books.length; i++){
     if(dbJSON[0].books[i].id === id){
       dbJSON[0].books[i] = reqBook
     }
   }
-  const dbString = JSON.stringify(dbJSON)
+  const dbString = JSON.stringify(dbFilterAuthor)
   fs.writeFileSync(path, dbString)
   return reqBook
 }

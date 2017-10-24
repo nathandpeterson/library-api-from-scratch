@@ -19,7 +19,7 @@ function createBook(req, res, next) {
 
 function updateBook(req, res, next) {
   const data = models.updateBook(req.params.id, req.body)
-  res.status(201).json(data)
+  res.status(200).json(data)
 }
 
 function destroyBook(req, res, next){
@@ -39,17 +39,17 @@ function getOneAuthor(req, res, next) {
 
 function createAuthor(req, res, next){
   const data = models.createAuthor(req.params.id, req.body)
-  res.status(200).json(data)
+  res.status(201).json(data)
 }
 
 function deleteAuthor(req, res, next){
   const data = models.deleteAuthor(req.params.id, req.params.authorID)
-  res.status(201).json(data)
+  res.status(200).json(data)
 }
 
 function updateAuthor(req, res, next){
   const data = models.updateAuthor(req.params.id, req.params.authorID, req.body)
-  res.status(201).json(data)
+  res.status(200).json(data)
 }
 
 module.exports = {getBooks, getOneBook, createBook, updateBook, destroyBook, getAllAuthors, getOneAuthor, createAuthor, deleteAuthor, updateAuthor}
